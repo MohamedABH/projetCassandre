@@ -1,3 +1,14 @@
 body {
-    background-color: skyblue;
+    background-color: #4A4E69;
+    margin: 0;
+}
+
+header {
+    background-color: #9A8C98;
+    color: #22223B;
+    display: flex;
+}
+
+footer, main {
+    color: #F2E9E4;
 }
