@@ -9,6 +9,11 @@ header {
     display: flex;
 }
 
+ul {
+    display: flex;
+    align-content: center;
+}
+
 footer, main {
     color: #F2E9E4;
 }
