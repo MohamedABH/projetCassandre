@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AuditTask{% endblock %}
+
+{% block body %}
+    <h1>AuditTask</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ audit_task.id }}</td>
+            </tr>
+            <tr>
+                <th>Name_task</th>
+                <td>{{ audit_task.nameTask }}</td>
+            </tr>
+            <tr>
+                <th>Description_task</th>
+                <td>{{ audit_task.descriptionTask }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_audit_task_index') }}">back to list</a>
+
+    <a href="{{ path('app_audit_task_edit', {'id': audit_task.id}) }}">edit</a>
+
+    {{ include('audit_task/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AuditTask index{% endblock %}
+
+{% block body %}
+    <h1>AuditTask index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name_task</th>
+                <th>Description_task</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for audit_task in audit_tasks %}
+            <tr>
+                <td>{{ audit_task.id }}</td>
+                <td>{{ audit_task.nameTask }}</td>
+                <td>{{ audit_task.descriptionTask }}</td>
+                <td>
+                    <a href="{{ path('app_audit_task_show', {'id': audit_task.id}) }}">show</a>
+                    <a href="{{ path('app_audit_task_edit', {'id': audit_task.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_audit_task_new') }}">Create new</a>
+{% endblock %}
