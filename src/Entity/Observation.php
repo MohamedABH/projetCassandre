@@ -24,6 +24,9 @@ class Observation
     #[ORM\JoinColumn(nullable: false)]
     private ?AuditTask $task = null;
 
+    #[ORM\ManyToOne(inversedBy: 'observations')]
+    private ?Collaborator $observator = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,18 @@ class Observation
     public function setTask(?AuditTask $task): static
     {
         $this->task = $task;
+
+        return $this;
+    }
+
+    public function getObservator(): ?Collaborator
+    {
+        return $this->observator;
+    }
+
+    public function setObservator(?Collaborator $observator): static
+    {
+        $this->observator = $observator;
 
         return $this;
     }

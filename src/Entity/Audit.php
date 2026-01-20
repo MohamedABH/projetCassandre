@@ -25,6 +25,14 @@ class Audit
     #[ORM\OneToMany(targetEntity: Observation::class, mappedBy: 'audit')]
     private Collection $observations;
 
+    #[ORM\ManyToOne(inversedBy: 'audits')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?AuditType $auditType = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Bill $bill = null;
+
     public function __construct()
     {
         $this->observations = new ArrayCollection();
@@ -73,6 +81,30 @@ class Audit
                 $observation->setAudit(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAuditType(): ?AuditType
+    {
+        return $this->auditType;
+    }
+
+    public function setAuditType(?AuditType $auditType): static
+    {
+        $this->auditType = $auditType;
+
+        return $this;
+    }
+
+    public function getBill(): ?Bill
+    {
+        return $this->bill;
+    }
+
+    public function setBill(Bill $bill): static
+    {
+        $this->bill = $bill;
 
         return $this;
     }

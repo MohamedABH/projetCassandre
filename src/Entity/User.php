@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -11,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_UUID', fields: ['uuid'])]
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
-#[ORM\DiscriminatorMap(['client' => Client::class, 'company' => Company::class])]
+#[ORM\DiscriminatorMap(['client' => Client::class, 'company' => Company::class, 'collaborator' => Collaborator::class])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -23,10 +25,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $uuid = null;
 
     /**
-     * @var list<string> The user roles
-     */
-    #[ORM\Column]
-    private array $roles = [];
+     * var list<string> The user roles
+     * I wanna make my own role entity, so lemme comment that really quick
+    *#[ORM\Column]
+    *private array $roles = [];
+    */
 
     /**
      * @var string The hashed password
@@ -36,6 +39,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
+
+    /**
+     * @var Collection<int, Role>
+     */
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
+    private Collection $roles;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -65,26 +79,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
+     * see UserInterface
+     
+    *public function getRoles(): array
+    *{
+    *    $roles = $this->roles;
+    *    // guarantee every user at least has ROLE_USER
+    *    $roles[] = 'ROLE_USER';
+    *
+    *    return array_unique($roles);
+    *}
+    */
 
     /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
+     * param list<string> $roles
+     
+    *public function setRoles(array $roles): static
+    *{
+    *    $this->roles = $roles;
+    *
+    *    return $this;
+    *}
+    */
 
     /**
      * @see PasswordAuthenticatedUserInterface
@@ -126,6 +142,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return array_unique(
+            array_map(fn(Role $role) => $role->getRoleName(), $this->roles->toArray())
+        );
+    }
+
+    public function addRole(Role $role): static
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles->add($role);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): static
+    {
+        $this->roles->removeElement($role);
 
         return $this;
     }

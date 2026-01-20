@@ -2,31 +2,30 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
+use App\Repository\CertificationTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\User;
 
-#[ORM\Entity(repositoryClass: ClientRepository::class)]
-class Client extends User
+#[ORM\Entity(repositoryClass: CertificationTypeRepository::class)]
+class CertificationType
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $firstname = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $lastname = null;
+    private ?string $certificationTypeName = null;
 
     /**
      * @var Collection<int, Certification>
      */
-    #[ORM\OneToMany(targetEntity: Certification::class, mappedBy: 'client')]
+    #[ORM\OneToMany(targetEntity: Certification::class, mappedBy: 'CertificationType')]
     private Collection $certifications;
 
     public function __construct()
     {
-        parent::__construct();
         $this->certifications = new ArrayCollection();
     }
 
@@ -35,26 +34,14 @@ class Client extends User
         return $this->id;
     }
 
-    public function getFirstname(): ?string
+    public function getCertificationTypeName(): ?string
     {
-        return $this->firstname;
+        return $this->certificationTypeName;
     }
 
-    public function setFirstname(string $firstname): static
+    public function setCertificationTypeName(string $certificationTypeName): static
     {
-        $this->firstname = $firstname;
-
-        return $this;
-    }
-
-    public function getLastname(): ?string
-    {
-        return $this->lastname;
-    }
-
-    public function setLastname(string $lastname): static
-    {
-        $this->lastname = $lastname;
+        $this->certificationTypeName = $certificationTypeName;
 
         return $this;
     }
@@ -71,7 +58,7 @@ class Client extends User
     {
         if (!$this->certifications->contains($certification)) {
             $this->certifications->add($certification);
-            $certification->setClient($this);
+            $certification->setCertificationType($this);
         }
 
         return $this;
@@ -81,8 +68,8 @@ class Client extends User
     {
         if ($this->certifications->removeElement($certification)) {
             // set the owning side to null (unless already changed)
-            if ($certification->getClient() === $this) {
-                $certification->setClient(null);
+            if ($certification->getCertificationType() === $this) {
+                $certification->setCertificationType(null);
             }
         }
 

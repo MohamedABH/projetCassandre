@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
+use App\Repository\CollaboratorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
 
-#[ORM\Entity(repositoryClass: ClientRepository::class)]
-class Client extends User
+#[ORM\Entity(repositoryClass: CollaboratorRepository::class)]
+class Collaborator extends User
 {
 
     #[ORM\Column(length: 255)]
@@ -19,15 +19,14 @@ class Client extends User
     private ?string $lastname = null;
 
     /**
-     * @var Collection<int, Certification>
+     * @var Collection<int, Observation>
      */
-    #[ORM\OneToMany(targetEntity: Certification::class, mappedBy: 'client')]
-    private Collection $certifications;
+    #[ORM\OneToMany(targetEntity: Observation::class, mappedBy: 'observator')]
+    private Collection $observations;
 
     public function __construct()
     {
-        parent::__construct();
-        $this->certifications = new ArrayCollection();
+        $this->observations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -60,29 +59,29 @@ class Client extends User
     }
 
     /**
-     * @return Collection<int, Certification>
+     * @return Collection<int, Observation>
      */
-    public function getCertifications(): Collection
+    public function getObservations(): Collection
     {
-        return $this->certifications;
+        return $this->observations;
     }
 
-    public function addCertification(Certification $certification): static
+    public function addObservation(Observation $observation): static
     {
-        if (!$this->certifications->contains($certification)) {
-            $this->certifications->add($certification);
-            $certification->setClient($this);
+        if (!$this->observations->contains($observation)) {
+            $this->observations->add($observation);
+            $observation->setObservator($this);
         }
 
         return $this;
     }
 
-    public function removeCertification(Certification $certification): static
+    public function removeObservation(Observation $observation): static
     {
-        if ($this->certifications->removeElement($certification)) {
+        if ($this->observations->removeElement($observation)) {
             // set the owning side to null (unless already changed)
-            if ($certification->getClient() === $this) {
-                $certification->setClient(null);
+            if ($observation->getObservator() === $this) {
+                $observation->setObservator(null);
             }
         }
 
